@@ -61,7 +61,9 @@ app.get('/products', async (req, res) => {
     res.json(result);
 });
 
-
+app.get('/products/:id', async (req, res) => {
+ 
+});
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
