@@ -72,11 +72,14 @@ app.get('/products/:id', async (req, res) => {
     const page = await browser.newPage();
     await page.goto(url);
 
+    //Scraping the data
     const result = await page.evaluate(() => {
         const elements = document.querySelector('#main-product');
 
         let title = elements.querySelector('.title-1').innerText;
         let quantity = elements.querySelector('#field_quantity > .field_value').innerText;
+
+        //Getting the ingredients data 
         let ingredientsList = elements.querySelector('#panel_ingredients_content > div > div > .panel_text').innerText;
 
 
@@ -85,7 +88,7 @@ app.get('/products/:id', async (req, res) => {
 
         let nutritionTableFacts = elements.querySelectorAll('#panel_nutrition_facts_table_content > div > table > tbody > tr')
 
-
+        //Getting the nutrition data table information
         let nutritionDataFetched = {
             energyPer100g: "",
             energyPerServing: "",
@@ -128,21 +131,60 @@ app.get('/products/:id', async (req, res) => {
         }
 
 
-        //Getting the nova score data
+        //Getting the nutrition and nova score data
         let attributes_grid = elements.querySelectorAll('#attributes_grid > li > .attribute_card > div > div > .attr_text > h4');
 
         let nutritionScore =  attributes_grid[0].innerText.replace("Nutri-Score ", "");
         let novaScore =  attributes_grid[1].innerText.replace("NOVA ", "");
+
+
+        //Getting the ingredients from palm, vegan, vegetarian data 
+        let ingredientsAnalysisContent = elements.querySelectorAll('#panel_ingredients_analysis_content > ul > li > a > img');
         
+        let hasPalmOil; 
+        let palmOilClass = ingredientsAnalysisContent[0].getAttribute('class');
+        if(palmOilClass == 'filter-red'){
+            hasPalmOil = true;
+        }else if(palmOilClass == 'filter-grey'){
+            hasPalmOil = "unknown";
+        }else if(palmOilClass == 'filter-green'){
+            hasPalmOil = false;
+        } else if(palmOilClass == 'filter-orange'){
+            hasPalmOil = 'may contain';
+        }
+
+        let isVegan;
+        let veganClass = ingredientsAnalysisContent[1].getAttribute('class');
+        if(veganClass == 'filter-red'){
+            isVegan = true;
+        }else if(veganClass == 'filter-grey'){
+            isVegan = "unknown";
+        }else if(veganClass == 'filter-green'){
+            isVegan = false;
+        } else if(veganClass == 'filter-orange'){
+            isVegan = 'may contain';
+        }
+
+        let isVegetarian;
+        let vegetarianClass = ingredientsAnalysisContent[2].getAttribute('class');
+        if(vegetarianClass == 'filter-red'){
+            isVegetarian = true;
+        }else if(vegetarianClass == 'filter-grey'){
+            isVegetarian = "unknown";
+        }else if(vegetarianClass == 'filter-green'){
+            isVegetarian = false;
+        } else if(vegetarianClass == 'filter-orange'){
+            isVegetarian = 'may contain';
+        }
 
 
         let data = {
             title,
             quantity,
             ingredients: {
-                hasPalmOil: "unknown",
-                isVegan: false,
-                isVegetarian: false,
+                hasPalmOil: hasPalmOil,
+                isVegan: isVegan,
+                isVegetarian: isVegetarian,
                 list: [
                     ingredientsList
                 ]
