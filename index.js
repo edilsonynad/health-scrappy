@@ -132,11 +132,14 @@ app.get('/products/:id', async (req, res) => {
 
 
         //Getting the nutrition and nova score data
-        let attributes_grid = elements.querySelectorAll('#attributes_grid > li > .attribute_card > div > div > .attr_text > h4');
+        let attributes_grid = elements.querySelectorAll('#attributes_grid > li > .attribute_card > div > div > .attr_text');
 
-        let nutritionScore =  attributes_grid[0].innerText.replace("Nutri-Score ", "");
-        let novaScore =  attributes_grid[1].innerText.replace("NOVA ", "");
-
+        let nutritionScore =  attributes_grid[0].querySelector('h4').innerText.replace("Nutri-Score ", "");
+        let nova =  {
+            score : attributes_grid[1].querySelector('h4').innerText.replace("NOVA ", ""), 
+            title: attributes_grid[1].querySelector('span').innerText
+        }
+        
 
         //Getting the ingredients from palm, vegan, vegetarian data 
         let ingredientsAnalysisContent = elements.querySelectorAll('#panel_ingredients_analysis_content > ul > li > a > img');
@@ -230,10 +233,7 @@ app.get('/products/:id', async (req, res) => {
                     }
                 }
             },
-            nova: {
-                score: novaScore,
-                title: "Alimentos ultra-processados"
-            }
+            nova
         }
 
         return data;
