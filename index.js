@@ -77,6 +77,11 @@ app.get('/products/:id', async (req, res) => {
 
         let title = elements.querySelector('.title-1').innerText;
         let quantity = elements.querySelector('#field_quantity > .field_value').innerText;
+        let ingredientsList = elements.querySelector('#panel_ingredients_content > div > div > .panel_text').innerText;
+
+
+        let servingSize = elements.querySelector('#panel_serving_size > div > div > div > .panel_text').innerText.replace("Tamanho da porção: ", "");
+        
 
         let data = {
             title,
@@ -86,7 +91,7 @@ app.get('/products/:id', async (req, res) => {
                 isVegan: false,
                 isVegetarian: false,
                 list: [
-                    "Água, preparado proteico (proteína texturizada de soja, proteína isolada de soja e proteína de ervilha), gordura de coco, óleo de canola, aroma natural, estabilizante metilcelulose, sal, beterraba em pó e corante carvão vegetal."
+                    ingredientsList
                 ]
             },
             nutrition: {
@@ -105,7 +110,7 @@ app.get('/products/:id', async (req, res) => {
                         "Açúcares em quantidade baixa (0%)"
                     ]
                 ],
-                servingSize: "80 g",
+                servingSize: servingSize,
                 data: {
                     Energia: {
                         per100g: "814 kj(194 kcal)",
