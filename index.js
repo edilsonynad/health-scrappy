@@ -72,7 +72,7 @@ app.get('/products/:id', async (req, res) => {
     const page = await browser.newPage();
     await page.goto(url);
 
-    const result = await page.evaluate( () => {
+    const result = await page.evaluate(() => {
         const elements = document.querySelector('#main-product');
 
         let title = elements.querySelector('.title-1').innerText;
@@ -81,7 +81,60 @@ app.get('/products/:id', async (req, res) => {
 
 
         let servingSize = elements.querySelector('#panel_serving_size > div > div > div > .panel_text').innerText.replace("Tamanho da porção: ", "");
+
+
+        let nutritionTableFacts = elements.querySelectorAll('#panel_nutrition_facts_table_content > div > table > tbody > tr')
+
+
+        let nutritionDataFetched = {
+            energyPer100g: "",
+            energyPerServing: "",
+            carboidratosPer100g: "",
+            carboidratosPerServing: "",
+            fiberPer100g: "",
+            fiberPerServing: "",
+            proteinPer100g: "",
+            proteinPerServing: "",
+            saltPer100g: "",
+            saltPerServing: ""
+        }
+
+        for (i = 0; i < nutritionTableFacts.length; i++) {
+            if (nutritionTableFacts[i].querySelectorAll('td')[0].innerText == "Energia") {
+
+                nutritionDataFetched.energyPer100g = nutritionTableFacts[i].querySelectorAll('td')[1].innerText;
+                nutritionDataFetched.energyPerServing = nutritionTableFacts[i].querySelectorAll('td')[2].innerText;
+
+            } else if (nutritionTableFacts[i].querySelectorAll('td')[0].innerText == "Gorduras/lípidos") {
+
+                nutritionDataFetched.carboidratosPer100g = nutritionTableFacts[i].querySelectorAll('td')[1].innerText;
+                nutritionDataFetched.carboidratosPerServing = nutritionTableFacts[i].querySelectorAll('td')[2].innerText;
+
+            } else if (nutritionTableFacts[i].querySelectorAll('td')[0].innerText == "Fibra alimentar") {
+
+                nutritionDataFetched.fiberPer100g = nutritionTableFacts[i].querySelectorAll('td')[1].innerText;
+                nutritionDataFetched.fiberPerServing = nutritionTableFacts[i].querySelectorAll('td')[2].innerText;
+
+            } else if (nutritionTableFacts[i].querySelectorAll('td')[0].innerText == "Proteínas") {
+
+                nutritionDataFetched.proteinPer100g = nutritionTableFacts[i].querySelectorAll('td')[1].innerText;
+                nutritionDataFetched.proteinPerServing = nutritionTableFacts[i].querySelectorAll('td')[2].innerText;
+
+            } else if (nutritionTableFacts[i].querySelectorAll('td')[0].innerText == "Sal") {
+                nutritionDataFetched.saltPer100g = nutritionTableFacts[i].querySelectorAll('td')[1].innerText;
+                nutritionDataFetched.saltPerServing = nutritionTableFacts[i].querySelectorAll('td')[2].innerText;
+            }
+
+        }
+
+
+        //Getting the nova score data
+        let attributes_grid = elements.querySelectorAll('#attributes_grid > li > .attribute_card > div > div > .attr_text > h4');
+
+        let nutritionScore =  attributes_grid[0].innerText.replace("Nutri-Score ", "");
+        let novaScore =  attributes_grid[1].innerText.replace("NOVA ", "");
         
+
 
         let data = {
             title,
@@ -95,7 +148,7 @@ app.get('/products/:id', async (req, res) => {
                 ]
             },
             nutrition: {
-                score: "D",
+                score: nutritionScore,
                 values: [
                     [
                         "moderate",
@@ -113,30 +166,30 @@ app.get('/products/:id', async (req, res) => {
                 servingSize: servingSize,
                 data: {
                     Energia: {
-                        per100g: "814 kj(194 kcal)",
-                        perServing: "651 kj(155 kcal)"
+                        per100g: nutritionDataFetched.energyPer100g,
+                        perServing: nutritionDataFetched.energyPerServing
                     },
 
                     Carboidratos: {
-                        per100g: "7,88 g",
-                        perServing: "6,3 g"
+                        per100g: nutritionDataFetched.carboidratosPer100g,
+                        perServing: nutritionDataFetched.carboidratosPerServing
                     },
                     'Fibra alimentar': {
-                        per100g: "?",
-                        perServing: "?"
+                        per100g: nutritionDataFetched.fiberPer100g,
+                        perServing: nutritionDataFetched.fiberPer100g
                     },
                     Proteínas: {
-                        per100g: "13,8 g",
-                        perServing: "11 g"
+                        per100g: nutritionDataFetched.proteinPer100g,
+                        perServing: nutritionDataFetched.proteinPerServing
                     },
                     Sal: {
-                        per100g: "0,565 g",
-                        perServing: "0,452 g"
+                        per100g: nutritionDataFetched.saltPer100g,
+                        perServing: nutritionDataFetched.saltPerServing
                     }
                 }
             },
             nova: {
-                score: 4,
+                score: novaScore,
                 title: "Alimentos ultra-processados"
             }
         }
