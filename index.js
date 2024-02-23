@@ -30,7 +30,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  * '/products/':
  *  get:
  *     tags:
- *     - Get Single Product Detail
+ *     - Get List of Products
  *     summary: Using the specific product id, you can get its details as an json
  *     parameters:
  *      - name: nutrition
