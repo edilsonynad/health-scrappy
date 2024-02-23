@@ -68,17 +68,20 @@ class Scrappy {
         const result = await page.evaluate(() => {
             const elements = document.querySelector('#main-product');
 
-            let title = elements.querySelector('.title-1').innerText;
-            let quantity = elements.querySelector('#field_quantity > .field_value').innerText;
+            let title = elements.querySelector('.title-1');
+            title = title !== null ? title.innerText : "";
+
+            let quantity = elements.querySelector('#field_quantity > .field_value');
+            quantity = quantity !== null ? quantity.innerText: "";
 
             //Getting the ingredients data 
-            let ingredientsList = elements.querySelector('#panel_ingredients_content > div > div > .panel_text').innerText;
+            let ingredientsList = elements.querySelector('#panel_ingredients_content > div > div > .panel_text');
+            ingredientsList = ingredientsList !== null ? ingredientsList.innerText: "";
 
+            let servingSize = elements.querySelector('#panel_serving_size > div > div > div > .panel_text');
+            servingSize = servingSize !== null ? servingSize.innerText.replace("Tamanho da porção: ", "") : "";
 
-            let servingSize = elements.querySelector('#panel_serving_size > div > div > div > .panel_text').innerText.replace("Tamanho da porção: ", "");
-
-
-            let nutritionTableFacts = elements.querySelectorAll('#panel_nutrition_facts_table_content > div > table > tbody > tr')
+            let nutritionTableFacts = elements.querySelectorAll('#panel_nutrition_facts_table_content > div > table > tbody > tr');
 
             //Getting the nutrition data table information
             let nutritionDataFetched = {
@@ -96,7 +99,6 @@ class Scrappy {
 
             for (i = 0; i < nutritionTableFacts.length; i++) {
                 if (nutritionTableFacts[i].querySelectorAll('td')[0].innerText == "Energia") {
-
                     nutritionDataFetched.energyPer100g = nutritionTableFacts[i].querySelectorAll('td')[1].innerText;
                     nutritionDataFetched.energyPerServing = nutritionTableFacts[i].querySelectorAll('td')[2].innerText;
 

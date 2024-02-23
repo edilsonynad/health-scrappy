@@ -41,15 +41,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *        in: query
  *        description: The username of the user
  *        required: true
- *     responses:
- *      200:
- *        description: Fetched Successfully
- *      400:
- *        description: Bad Request
- *      404:
- *        description: Not Found
- *      500:
- *        description: Server Error
  */
 
 app.get('/products', async (req, res) => {
@@ -78,15 +69,7 @@ app.get('/products', async (req, res) => {
  *        in: path
  *        description: The username of the user
  *        required: true
- *     responses:
- *      200:
- *        description: Fetched Successfully
- *      400:
- *        description: Bad Request
- *      404:
- *        description: Not Found
- *      500:
- *        description: Server Error
+ *      
  */
 
 app.get('/products/:id', async (req, res) => {
