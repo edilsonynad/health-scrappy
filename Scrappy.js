@@ -56,7 +56,7 @@ class Scrappy {
     }
 
     static async getSpedificProduct(id) {
-        
+
         let url = "https://br.openfoodfacts.org/produto/" + id;
 
         console.log("Open the headless browser");
@@ -177,12 +177,10 @@ class Scrappy {
             let nutritionValues = elements.querySelectorAll('#panel_nutrient_levels_content > div > ul > li > a');
             let values = [];
             for (i = 0; i < nutritionValues.length; i++) {
-
                 let row = [
                     nutritionValues[i].querySelector('img').getAttribute('src').replace('https://static.openfoodfacts.org/images/misc/', '').replace(".svg", ""),
                     nutritionValues[i].querySelector('h4').innerText
                 ]
-
                 values.push(row)
             }
 
