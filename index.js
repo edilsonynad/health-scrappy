@@ -31,15 +31,15 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *  get:
  *     tags:
  *     - Get List of Products
- *     summary: Using the specific product id, you can get its details as an json
+ *     summary: Using the specific nutrition and nova scores to get the list of products
  *     parameters:
  *      - name: nutrition
  *        in: query
- *        description: The username of the user
+ *        description: Nutrition Score (A,B,C,D,E)
  *        required: true
  *      - name: nova
  *        in: query
- *        description: The username of the user
+ *        description: Nova Score (1,2,3,4)
  *        required: true
  */
 
@@ -67,7 +67,7 @@ app.get('/products', async (req, res) => {
  *     parameters:
  *      - name: id
  *        in: path
- *        description: The username of the user
+ *        description: ID of the product
  *        required: true
  *      
  */
