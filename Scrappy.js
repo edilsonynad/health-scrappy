@@ -3,10 +3,13 @@ class Scrappy {
 
     static async getProductsList(nutrition, nova) {
 
+        //Setting the url paramaters
         let url = 'https://br.openfoodfacts.org/nutrition-grade/' + nutrition + '/nova-group/' + nova;
 
         console.log("Open the headless browser");
         const browser = await puppeteer.launch();
+
+        console.log("Going to the url the headless browser");
         const page = await browser.newPage();
         await page.goto(url);
 
@@ -61,29 +64,37 @@ class Scrappy {
 
         console.log("Open the headless browser");
         const browser = await puppeteer.launch();
+
+        console.log("Going to the url the headless browser");
         const page = await browser.newPage();
         await page.goto(url);
 
         //Scraping the data
+        console.log("Getting the data from the website");
         const result = await page.evaluate(() => {
+            // Get the main element
             const elements = document.querySelector('#main-product');
 
+            //Get the title and check for null value 
             let title = elements.querySelector('.title-1');
             title = title !== null ? title.innerText : "";
 
+            //Get the quantity and check for null value 
             let quantity = elements.querySelector('#field_quantity > .field_value');
             quantity = quantity !== null ? quantity.innerText: "";
 
-            //Getting the ingredients data 
+            //Getting the ingredients data and check for null value 
             let ingredientsList = elements.querySelector('#panel_ingredients_content > div > div > .panel_text');
             ingredientsList = ingredientsList !== null ? ingredientsList.innerText: "";
 
+            //Getting the serving size data and check for null value 
             let servingSize = elements.querySelector('#panel_serving_size > div > div > div > .panel_text');
             servingSize = servingSize !== null ? servingSize.innerText.replace("Tamanho da porção: ", "") : "";
 
+            //Getting the nutrition data table information
             let nutritionTableFacts = elements.querySelectorAll('#panel_nutrition_facts_table_content > div > table > tbody > tr');
 
-            //Getting the nutrition data table information
+            // Objext of nutrition facts 
             let nutritionDataFetched = {
                 energyPer100g: "",
                 energyPerServing: "",
@@ -97,7 +108,10 @@ class Scrappy {
                 saltPerServing: ""
             }
 
+            //Iterate over all all items in the table of nutrients facts  
             for (i = 0; i < nutritionTableFacts.length; i++) {
+
+                //Check for correspondents cell in table 
                 if (nutritionTableFacts[i].querySelectorAll('td')[0].innerText == "Energia") {
                     nutritionDataFetched.energyPer100g = nutritionTableFacts[i].querySelectorAll('td')[1].innerText;
                     nutritionDataFetched.energyPerServing = nutritionTableFacts[i].querySelectorAll('td')[2].innerText;
@@ -125,17 +139,20 @@ class Scrappy {
             }
 
 
-            //Getting the nutrition and nova score data
+            //Getting the atribuites accordions
             let attributes_grid = elements.querySelectorAll('#attributes_grid > li > .attribute_card > div > div > .attr_text');
 
+            //Getting the nutrition score 
             let nutritionScore = attributes_grid[0].querySelector('h4').innerText.replace("Nutri-Score ", "");
+
+            //Nova score 
             let nova = {
                 score: attributes_grid[1].querySelector('h4').innerText.replace("NOVA ", ""),
                 title: attributes_grid[1].querySelector('span').innerText
             }
 
 
-            //Getting the ingredients from palm, vegan, vegetarian data 
+            //GGetting and checking if products hasPalmOil, isVegan, isVegetarian
             let ingredientsAnalysisContent = elements.querySelectorAll('#panel_ingredients_analysis_content > ul > li > a > img');
 
             let hasPalmOil;
@@ -230,6 +247,9 @@ class Scrappy {
 
             return data;
         });
+
+        console.log("Closing the headless browser");
+        await browser.close();
 
         return result;
     }
