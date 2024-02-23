@@ -181,6 +181,19 @@ app.get('/products/:id', async (req, res) => {
         }
 
 
+        // Getting the nutrition values 
+        let nutritionValues = elements.querySelectorAll('#panel_nutrient_levels_content > div > ul > li > a');
+        let values = [];
+        for(i = 0; i < nutritionValues.length; i++){
+
+            let row = [
+                nutritionValues[i].querySelector('img').getAttribute('src').replace('https://static.openfoodfacts.org/images/misc/', '').replace(".svg",""),
+                nutritionValues[i].querySelector('h4').innerText
+            ]
+
+            values.push(row)
+        }
+
         let data = {
             title,
             quantity,
@@ -194,20 +207,7 @@ app.get('/products/:id', async (req, res) => {
             },
             nutrition: {
                 score: nutritionScore,
-                values: [
-                    [
-                        "moderate",
-                        "Gorduras/lípidos em quantidade moderada (11.9%)"
-                    ],
-                    [
-                        "high",
-                        "Gorduras/lípidos/ácidos gordos saturados em quantidade elevada (8%)"
-                    ],
-                    [
-                        "low",
-                        "Açúcares em quantidade baixa (0%)"
-                    ]
-                ],
+                values,
                 servingSize: servingSize,
                 data: {
                     Energia: {
